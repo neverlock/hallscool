@@ -21,8 +21,10 @@ func main()  {
 
 		//add and Edit your entry.xxxx it is name of google form
 
+		//input text use randomString
 	        values.Set("entry.1352624538", randomString(10))
 	        values.Set("entry.668341357", randomString(10))
+		//input digit like Tel No. use strconv.Itoa(rand.Intn(10000000000))
 		values.Set("entry.1007776359",strconv.Itoa(rand.Intn(10000000000)))
 	        // Submit form
 	        resp, err := http.PostForm(postUrl, values)
