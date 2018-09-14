@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/fatih/color"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type Job struct {
@@ -47,18 +49,24 @@ func worker(wg *sync.WaitGroup, id int) {
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
-			defer func() {
-				recover()
-				fmt.Println(err)
-			}()
 			panic(err)
-		} else {
-			defer resp.Body.Close()
 		}
+		/*
+			if err != nil {
+				defer func() {
+					recover()
+					fmt.Println(err)
+				}()
+				panic(err)
 
+			}
+		*/
+
+		defer resp.Body.Close()
 		elasp := fmt.Sprintf("%s", time.Since(start))
 		output := Result{job, resp.Status, id, elasp}
 		results <- output
+
 	}
 	wg.Done()
 }
@@ -66,11 +74,26 @@ func createWorkerPool(noOfWorkers int) {
 	var wg sync.WaitGroup
 	for i := 0; i < noOfWorkers; i++ {
 		wg.Add(1)
-		go worker(&wg, i)
+		//go worker(&wg, i)
+		GoSafe(func() {
+			worker(&wg, i)
+		})
 	}
 	wg.Wait()
 	close(results)
 }
+
+func GoSafe(fn func()) {
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println("Panic:", err)
+			}
+		}()
+		fn()
+	}()
+}
+
 func allocate(noOfJobs int) {
 	for i := 0; i < noOfJobs; i++ {
 
