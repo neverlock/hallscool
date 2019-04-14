@@ -46,7 +46,7 @@ func req() {
 	if err != nil {
 		defer func() {
 			recover()
-			log.Printf("Can'thttp.NewRequest\n")
+			log.Printf("Can't http.NewRequest\n")
 		}()
 		panic(err)
 	}
