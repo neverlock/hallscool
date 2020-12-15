@@ -14,8 +14,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"golang.org/x/net/proxy"
-
 	"github.com/neverlock/utility/random"
 	"golang.org/x/net/proxy"
 )
