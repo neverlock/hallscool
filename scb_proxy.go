@@ -15,6 +15,7 @@ import (
 	"net/url"
 
 	"github.com/neverlock/utility/random"
+	"golang.org/x/net/proxy"
 )
 
 type Js1 struct {
