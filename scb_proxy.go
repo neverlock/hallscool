@@ -12,7 +12,6 @@ import (
 	//"io/ioutil"
 	"log"
 	"net/http"
-	"net/proxy"
 	"net/url"
 
 	"github.com/neverlock/utility/random"
