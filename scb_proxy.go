@@ -12,8 +12,9 @@ import (
 	//"io/ioutil"
 	"log"
 	"net/http"
-	"net/proxy"
 	"net/url"
+
+	"golang.org/x/net/proxy"
 
 	"github.com/neverlock/utility/random"
 )
@@ -134,6 +135,7 @@ func initValue() {
 func main() {
 
 	proxyType = "socks" //http or socks
+	//proxyType = "http" //http or socks
 
 	MAX := 100000
 	for key := 0; key <= MAX; key++ {
@@ -144,29 +146,30 @@ func main() {
 
 func req() {
 	initValue()
+	var transport *http.Transport
 
 	urlStr := fmt.Sprintf("https://www.scbstar.com/page/i.php")
 
-	if len(proxy) == 0 {
+	if len(listProxy) == 0 {
 		fmt.Println("Exit program no proxy left")
 		os.Exit(1)
 	}
-	r := random.Int(0, len(proxy))
-	proxyStr := proxy[r]
-	proxyURL, err := url.Parse(proxyStr)
-	if err != nil {
-		log.Println(err)
-	}
+	r := random.Int(0, len(listProxy))
+	proxyStr := listProxy[r]
 
 	if proxyType == "socks" {
-		dialSocksProxy, err := proxy.SOCKS5("tcp", "proxy_ip", nil, proxy.Direct)
+		dialSocksProxy, err := proxy.SOCKS5("tcp", proxyStr, nil, proxy.Direct)
 		if err != nil {
 			fmt.Println("Error connecting to proxy:", err)
 		}
-		transport := &http.Transport{Dial: dialSocksProxy.Dial}
+		transport = &http.Transport{Dial: dialSocksProxy.Dial}
 
 	} else {
-		transport := &http.Transport{
+		proxyURL, err := url.Parse(proxyStr)
+		if err != nil {
+			log.Println(err)
+		}
+		transport = &http.Transport{
 			Proxy: http.ProxyURL(proxyURL),
 			Dial: (&net.Dialer{
 				Timeout: 5 * time.Second,
@@ -190,9 +193,9 @@ func req() {
 			log.Printf("[❌] Can't http.NewRequest[proxy = %s]\n", proxyStr)
 			log.Printf("[‼️ ] Remove =%s from slice\n", proxyStr)
 			//remove element from slice
-			proxy[r] = proxy[len(proxy)-1]
-			proxy[len(proxy)-1] = ""
-			proxy = proxy[:len(proxy)-1]
+			listProxy[r] = listProxy[len(listProxy)-1]
+			listProxy[len(listProxy)-1] = ""
+			listProxy = listProxy[:len(listProxy)-1]
 			//end remove element from slice
 		}()
 		panic(err)
@@ -207,9 +210,9 @@ func req() {
 			log.Printf("[❌] Can't client.Do(req)[proxy = %s]\n", proxyStr)
 			log.Printf("[‼️ ] Remove =%s from slice\n", proxyStr)
 			//remove element from slice
-			proxy[r] = proxy[len(proxy)-1]
-			proxy[len(proxy)-1] = ""
-			proxy = proxy[:len(proxy)-1]
+			listProxy[r] = listProxy[len(listProxy)-1]
+			listProxy[len(listProxy)-1] = ""
+			listProxy = listProxy[:len(listProxy)-1]
 			//end remove element from slice
 		}()
 		panic(err)
@@ -256,9 +259,9 @@ func req1(proxyStr string, proxyIndex int) {
 			log.Printf("[❌] Can't http.NewRequest\n")
 			log.Printf("[‼️ ] Remove =%s from slice\n", proxyStr)
 			//remove element from slice
-			proxy[proxyIndex] = proxy[len(proxy)-1]
-			proxy[len(proxy)-1] = ""
-			proxy = proxy[:len(proxy)-1]
+			listProxy[proxyIndex] = listProxy[len(listProxy)-1]
+			listProxy[len(listProxy)-1] = ""
+			listProxy = listProxy[:len(listProxy)-1]
 			//end remove element from slice
 		}()
 		panic(err)
@@ -274,9 +277,9 @@ func req1(proxyStr string, proxyIndex int) {
 			log.Printf("[❌] Can't client.Do(req)[proxy = %s]\n", proxyStr)
 			log.Printf("[‼️ ] Remove =%s from slice\n", proxyStr)
 			//remove element from slice
-			proxy[proxyIndex] = proxy[len(proxy)-1]
-			proxy[len(proxy)-1] = ""
-			proxy = proxy[:len(proxy)-1]
+			listProxy[proxyIndex] = listProxy[len(listProxy)-1]
+			listProxy[len(listProxy)-1] = ""
+			listProxy = listProxy[:len(listProxy)-1]
 			//end remove element from slice
 		}()
 		panic(err)
