@@ -12,6 +12,7 @@ import (
 	//"io/ioutil"
 	"log"
 	"net/http"
+	"net/proxy"
 	"net/url"
 
 	"github.com/neverlock/utility/random"
@@ -91,6 +92,8 @@ var domain []string = []string{
 	"live.com",
 }
 
+var proxyType string
+
 func initValue() {
 	//var userAgent, email, password, fullname, ccno, expmonth, expyear, cvv, citizen, climit, phone, dobday, dobmonth, dobyear string
 	userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36"
@@ -130,6 +133,8 @@ func initValue() {
 
 func main() {
 
+	proxyType = "socks" //http or socks
+
 	MAX := 100000
 	for key := 0; key <= MAX; key++ {
 		//		time.Sleep(1 * time.Second)
@@ -153,12 +158,21 @@ func req() {
 		log.Println(err)
 	}
 
-	transport := &http.Transport{
-		Proxy: http.ProxyURL(proxyURL),
-		Dial: (&net.Dialer{
-			Timeout: 5 * time.Second,
-		}).Dial,
-		TLSHandshakeTimeout: 5 * time.Second,
+	if proxyType == "socks" {
+		dialSocksProxy, err := proxy.SOCKS5("tcp", "proxy_ip", nil, proxy.Direct)
+		if err != nil {
+			fmt.Println("Error connecting to proxy:", err)
+		}
+		transport := &http.Transport{Dial: dialSocksProxy.Dial}
+
+	} else {
+		transport := &http.Transport{
+			Proxy: http.ProxyURL(proxyURL),
+			Dial: (&net.Dialer{
+				Timeout: 5 * time.Second,
+			}).Dial,
+			TLSHandshakeTimeout: 5 * time.Second,
+		}
 	}
 
 	client := &http.Client{
