@@ -133,8 +133,8 @@ func initValue() {
 
 func main() {
 
-	proxyType = "socks" //http or socks
-	//proxyType = "http" //http or socks
+	//proxyType = "socks" //http or socks
+	proxyType = "http" //http or socks
 
 	MAX := 100000
 	for key := 0; key <= MAX; key++ {
@@ -216,7 +216,7 @@ func req() {
 		}()
 		panic(err)
 	}
-	fmt.Printf("[first page post][proxy = %s] %s\n", proxyStr, resp.Status)
+	fmt.Printf("[✅][first page post][proxy = %s] %s\n", proxyStr, resp.Status)
 	defer resp.Body.Close()
 
 	req1(proxyStr, r)
@@ -283,7 +283,7 @@ func req1(proxyStr string, proxyIndex int) {
 		}()
 		panic(err)
 	}
-	fmt.Printf("[Page2][proxy = %s] %s\n", proxyStr, resp.Status)
+	fmt.Printf("[✅][Page2][proxy = %s] %s\n", proxyStr, resp.Status)
 	defer resp.Body.Close()
 
 	//req2(proxyStr)
