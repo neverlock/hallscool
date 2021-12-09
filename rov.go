@@ -180,14 +180,16 @@ func req() {
 	}
 	defer resp.Body.Close()
 
-	fmt.Printf("[response][%s] %s\n", proxyStr, resp.Status)
 	if resp.StatusCode == http.StatusOK {
+		fmt.Printf("[✅][response][%s] %s\n", proxyStr, resp.Status)
 		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			log.Fatal(err)
 		}
 		bodyString := string(bodyBytes)
 		fmt.Println(bodyString)
+	} else {
+		fmt.Printf("[❗️][response][%s] %s\n", proxyStr, resp.Status)
 	}
 
 }
