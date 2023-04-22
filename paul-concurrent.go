@@ -4,93 +4,19 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-//	"net/url"
 	"sync"
-	//"strconv"
 	"bytes"
-	//"strconv"
 	"mime/multipart"
 )
-
-/*
-func main() {
-
-	// Create a wait group
-	var wg sync.WaitGroup
-	Max := 100000
-	CONCURRENT := 5
-
-	// Create a channel for sending requests
-	requests := make(chan *http.Request, CONCURRENT)
-
-	// Create a counter
-	count := 0
-
-	postUrl := "https://pala42.com/ee/post.php"
-	// Edit Max your post
-
-	values := make(url.Values)
-
-	// Start two goroutines to send requests
-	for i := 0; i < CONCURRENT; i++ {
-		go func() {
-			for req := range requests {
-				user := randomString(10)
-				//email := fmt.Sprintf("%s@%s.com", user, domain)
-				email := fmt.Sprintf("%s@gmail.com", user)
-				pass := randomString(10)
-
-				values.Set("email", email)
-				values.Set("pass", pass)
-				//input digit like Tel No. use strconv.Itoa(rand.Intn(10000000000))
-				//values.Set("entry.1007776359", strconv.Itoa(rand.Intn(10000000000)))
-				// Submit form
-				resp, err := http.PostForm(postUrl, values)
-				if err != nil {
-					fmt.Println(err)
-					continue
-				}
-
-				// Check the response status code
-				if resp.StatusCode != http.StatusOK {
-					fmt.Println("Error:", resp.Status)
-					continue
-				}
-				// Increment the counter
-				count++
-				// Print the count in the request
-				fmt.Println("Count in the request:", count)
-
-			}
-
-			// Close the channel
-			close(requests)
-		}()
-	}
-
-	// Send 10 requests
-	for i := 0; i < Max; i++ {
-		// Send the request
-		requests <- req
-		wg.Add(1)
-	}
-
-	// Wait for all requests to finish
-	wg.Wait()
-
-}
-
-*/
-
 func main() {
 	// URL to send POST request to
 	url := "https://pala42.com/ee/post.php"
 
 	// Number of requests to send
-	numRequests := 1000
+	numRequests := 1000000
 
 	// Maximum number of concurrent requests
-	maxConcurrent := 5
+	maxConcurrent := 10
 
 	// Create a buffered channel to control the concurrency
 	concurrency := make(chan struct{}, maxConcurrent)
